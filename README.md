@@ -19,3 +19,17 @@ dotnet sln .\ApplicationTemplate.sln add .\ApplicationTemplate
 # set global settings
 dotnet new globaljson --sdk-version 9.0.203 --roll-forward latestFeature
 ```
+
+- how to build 
+```pwsh
+dotnet restore
+
+dotnet clean
+
+dotnet build -c Release --no-restore
+```
+
+- how to run
+```pwsh
+.\ApplicationTemplate\bin\Release\net9.0\ApplicationTemplate.exe
+```
