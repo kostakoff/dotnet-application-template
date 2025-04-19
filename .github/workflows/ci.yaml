@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [ "master", "develop" ]
+
+jobs:
+  ci:
+    runs-on: windows-2022
+    steps:
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.203
+    - uses: actions/checkout@v4
+    - name: Build dotnet application
+      shell: pwsh
+      run: |
+        dotnet restore
+        dotnet clean
+        dotnet build -c Release --no-restore
