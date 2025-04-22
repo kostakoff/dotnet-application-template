@@ -1,7 +1,8 @@
 def call() {
 
-    //Map opts = [:]
+    Map opts = [:]
     //opts.jenkinsNode = 'Windows'
+    opts.projectName = 'dotnet-application'
     
     pipeline {
         agent {
@@ -20,6 +21,10 @@ def call() {
             disableConcurrentBuilds()
         }
 
+        environment {
+            PROJECT_NAME = "${opts.projectName}"
+        }
+
         stages {
             stage('Initialise') {
                 steps {
@@ -35,7 +40,7 @@ def call() {
 
                         withSonarQubeEnv('sonar.local') {
                             pwsh(script: '''
-                                dotnet $env:SONAR_SCANNER_NET/SonarScanner.MSBuild.dll begin /k:"dotnet-application"
+                                dotnet $env:SONAR_SCANNER_NET/SonarScanner.MSBuild.dll begin /k:$env:PROJECT_NAME
                             ''')
                         }
 
