@@ -18,6 +18,12 @@ dotnet sln .\ApplicationTemplate.sln add .\ApplicationTemplate
 
 # set global settings
 dotnet new globaljson --sdk-version 9.0.203 --roll-forward latestFeature
+
+# create unit test project
+dotnet new mstest -n ApplicationTemplateTest
+
+#  add vs unit test project to sln file
+dotnet sln .\ApplicationTemplate.sln add .\ApplicationTemplateTest
 ```
 
 - how to build 
@@ -27,6 +33,8 @@ dotnet restore
 dotnet clean
 
 dotnet build -c Release --no-restore
+
+dotnet test -c Release
 ```
 
 - how to run
