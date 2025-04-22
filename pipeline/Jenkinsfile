@@ -30,11 +30,30 @@ def call() {
             stage('Build dotnet') {
                 steps {
                     script { 
+
+                        env.SONAR_SCANNER_NET = tool 'sonarscanner-net'
+
+                        withSonarQubeEnv('sonar.local') {
+                            pwsh(script: '''
+                                dotnet $env:SONAR_SCANNER_NET/SonarScanner.MSBuild.dll begin /k:"dotnet-application"
+                            ''')
+                        }
+
                         pwsh(script: '''
                             dotnet restore
                             dotnet clean
                             dotnet build -c Release --no-restore
                         ''')
+
+                        pwsh(script: '''
+                            dotnet test -c Release --results-directory:$env:WORKSPACE/Test_Results --collect 'Code Covarage'
+                        ''')
+
+                        withSonarQubeEnv('sonar.local') {
+                            pwsh(script: '''
+                                dotnet $env:SONAR_SCANNER_NET/SonarScanner.MSBuild.dll end
+                            ''')
+                        }
                         
                         pwsh(script: 'ls')
                     }
