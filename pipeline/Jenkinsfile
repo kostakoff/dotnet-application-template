@@ -1,0 +1,67 @@
+def call() {
+
+    //Map opts = [:]
+    //opts.jenkinsNode = 'Windows'
+    
+    pipeline {
+        agent {
+            // Which Jenkins node to build on
+            label 'windows'
+        }
+
+        options {
+            // Colorize the terminal output
+            ansiColor('xterm')
+            // the build should never take this long
+            timeout(time: 1, unit: 'HOURS')
+            // add timestamps to log output
+            timestamps()
+            // disable parallel buildchain
+            disableConcurrentBuilds()
+        }
+
+        stages {
+            stage('Initialise') {
+                steps {
+                    cleanWs()
+                    checkout scm
+                }
+            }
+            stage('Build dotnet') {
+                steps {
+                    script { 
+                        pwsh(script: '''
+                            dotnet restore
+                            dotnet clean
+                            dotnet build -c Release --no-restore
+                        ''')
+                        
+                        pwsh(script: 'ls')
+                    }
+                }
+            }
+
+            /*stage('Report SonarQube') {
+                steps {
+                    echo "Build Number ${env.BUILD_NUMBER} at ${env.WORKSPACE} on node_name: ${env.node_name}"
+                    script {
+                        sh(script: '''
+                            curl https://artifactory.globalrelay.net/artifactory/repo1/org/sonarsource/scanner/cli/sonar-scanner-cli/6.1.0.4477/sonar-scanner-cli-6.1.0.4477-macosx-aarch64.zip > ./sonar-scanner-cli-6.1.0.4477-macosx-aarch64.zip
+                            unzip ./sonar-scanner-cli-6.1.0.4477-macosx-aarch64.zip -d . 
+                            swift test --enable-code-coverage
+                            xcrun llvm-cov show -use-color=false -instr-profile=.build/debug/codecov/default.profdata .build/debug/IMessageDecoderPackageTests.xctest/Contents/MacOS/IMessageDecoderPackageTests > sonar-coverage.report
+                        ''')
+                        withSonarQubeEnv('SonarQube Server') {
+                            sh './sonar-scanner-6.1.0.4477-macosx-aarch64/bin/sonar-scanner -Dproject.settings=./pipeline/sonar-project.properties'
+                        }
+                        /*timeout(time: 1, unit: 'MINUTES') {
+                            waitForQualityGate abortPipeline: false
+                        }*-/
+                    }
+                }
+            }*/
+        }
+    }
+}
+
+call()
