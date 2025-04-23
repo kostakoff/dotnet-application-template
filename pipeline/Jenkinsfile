@@ -36,7 +36,7 @@ def call() {
                 steps {
                     script { 
 
-                        env.SONAR_SCANNER_NET = tool 'sonarscanner-net'
+                        env.SONAR_SCANNER_NET = tool("sonarscanner-net")
 
                         withSonarQubeEnv('sonar.local') {
                             pwsh(script: '''
@@ -68,6 +68,14 @@ def call() {
 
                     }
                 }
+            }
+        }
+
+        post {
+            success {
+                archiveArtifacts artifacts: 'ApplicationTemplate/bin/Release/net9.0/**',
+                                fingerprint: true,
+                                allowEmptyArchive: false
             }
         }
     }
