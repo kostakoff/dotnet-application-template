@@ -7,7 +7,7 @@ def call() {
     pipeline {
         agent {
             // Which Jenkins node to build on
-            label 'linux'
+            label 'jk-w2'
         }
 
         options {
