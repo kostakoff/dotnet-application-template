@@ -36,6 +36,12 @@ ScaffoldingReadMe.txt
 # NuGet Symbol Packages
 *.snupkg
 
+# NUKE
+.nuke/temp/
+
+# Click-Once directory
+publish
+
 # Others
 ~$*
 *~

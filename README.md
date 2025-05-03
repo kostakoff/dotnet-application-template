@@ -26,7 +26,9 @@ dotnet new mstest -n ApplicationTemplateTest
 dotnet sln .\ApplicationTemplate.sln add .\ApplicationTemplateTest
 ```
 
-- how to build 
+## build instruction
+
+- how to build common way
 ```pwsh
 dotnet restore
 
@@ -40,4 +42,9 @@ dotnet test -c Release
 - how to run
 ```pwsh
 .\ApplicationTemplate\bin\Release\net9.0\ApplicationTemplate.exe
+```
+
+- how to build through build wrapper
+```pwsh
+.\build.ps1
 ```

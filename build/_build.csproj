@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace />
+    <NoWarn>CS0649;CS0169;CS8618</NoWarn>
+    <NukeRootDirectory>..</NukeRootDirectory>
+    <NukeScriptDirectory>..</NukeScriptDirectory>
+    <NukeTelemetryVersion>1</NukeTelemetryVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\NuGet.Config" Link="NuGet.Config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nuke.Common" Version="9.0.4" />
+    <PackageReference Include="NuGet.CommandLine" Version="6.12.1" />
+    <PackageReference Include="System.Formats.Asn1" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageDownload Include="dotnet-sonarscanner" Version="[10.1.1]" />
+  </ItemGroup>
+
+</Project>

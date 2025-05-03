@@ -30,6 +30,10 @@ def call() {
                 steps {
                     cleanWs()
                     checkout scm
+                    script {
+                        env.APP_VERSION = readFile('version.txt').trim()
+                        echo "App version set to ${env.APP_VERSION}"
+                    }
                 }
             }
             stage('Build dotnet') {
