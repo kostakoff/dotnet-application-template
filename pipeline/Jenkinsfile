@@ -2,6 +2,7 @@ def call() {
 
     Map opts = [:]
     //opts.jenkinsNode = 'Windows'
+    opts.projectName = 'dotnet-application'
 
     pipeline {
         agent {

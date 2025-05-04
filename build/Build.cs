@@ -30,7 +30,9 @@ class Build : NukeBuild
     const string Copyright = "Unlicense.org";
     const string ProductDescription = "Application Template";
 
-    private const string SonarProject = "dotnet-application";
+    static string SonarProject = GetEnvironmentVariable("PROJECT_NAME") ?? "dotnet-application";
+    static string SonarOrganization = GetEnvironmentVariable("SONAR_ORG") ?? "Local";
+
     private const string SonarCoverageOpenCover = "**/*.opencover.xml";
     private const string SonarUnitTestReports = "**/*UnitTests.xml";
 
@@ -151,6 +153,7 @@ class Build : NukeBuild
         {
             SonarScannerBegin(settings => settings
                 .SetProjectKey(SonarProject)
+                .SetOrganization(SonarOrganization)
                 .SetOpenCoverPaths(SonarCoverageOpenCover)
                 .SetNUnitTestReports(SonarUnitTestReports)
                 .SetProcessAdditionalArguments(
