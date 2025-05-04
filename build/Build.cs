@@ -163,7 +163,6 @@ class Build : NukeBuild
         });
 
    Target SonarQubeEnd => _ => _
-        .DependsOn(Publish)
         .Executes(() =>
         {
             SonarScannerEnd();
