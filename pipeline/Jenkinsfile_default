@@ -2,7 +2,8 @@ def call() {
 
     Map opts = [:]
     //opts.jenkinsNode = 'Windows'
-
+    opts.projectName = 'dotnet-application'
+    
     pipeline {
         agent {
             // Which Jenkins node to build on
@@ -29,50 +30,49 @@ def call() {
                 steps {
                     cleanWs()
                     checkout scm
-                }
-            }
-
-            stage('SonarQubeBegin record') {
-                steps {
                     script {
-                        withSonarQubeEnv('sonar.local') {
-                            pwsh(script: '''
-                                ./build.ps1 --target SonarQubeBegin
-                            ''')
-                        }
+                        env.APP_VERSION = readFile('version.txt').trim()
+                        echo "App version set to ${env.APP_VERSION}"
                     }
                 }
             }
-
             stage('Build dotnet') {
                 steps {
                     script { 
-                        pwsh(script: '''
-                            ./build.ps1
-                        ''')
 
-                        pwsh(script: 'ls')
-                    }
-                    //nunit(testResultsPattern: 'src/*.UnitTests.xml', failIfNoResults: true)
-                }
-            }
+                        env.SONAR_SCANNER_NET = tool("sonarscanner-net")
 
-            stage('SonarQubeEnd record') {
-                steps {
-                    script {
                         withSonarQubeEnv('sonar.local') {
                             pwsh(script: '''
-                                ./build.ps1 --target SonarQubeEnd
+                                dotnet $env:SONAR_SCANNER_NET/SonarScanner.MSBuild.dll begin /k:$env:PROJECT_NAME
                             ''')
                         }
 
+                        pwsh(script: '''
+                            dotnet restore
+                            dotnet clean
+                            dotnet build -c Release --no-restore
+                        ''')
+
+                        pwsh(script: '''
+                            dotnet test -c Release --results-directory:$env:WORKSPACE/Test_Results --collect 'Code Covarage'
+                        ''')
+
+                        withSonarQubeEnv('sonar.local') {
+                            pwsh(script: '''
+                                dotnet $env:SONAR_SCANNER_NET/SonarScanner.MSBuild.dll end
+                            ''')
+                        }
+                        
+                        pwsh(script: 'ls')
+                        
                         timeout(time: 1, unit: 'MINUTES') {
                             waitForQualityGate abortPipeline: false
                         }
+
                     }
                 }
             }
-
         }
 
         post {
